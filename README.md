@@ -45,7 +45,7 @@ npm link
 
 4. **Stop and save your session:**
    ```bash
-  memoria stop --save --notes "Worked on feature X" --tags "work"
+   memoria stop --save --notes "Worked on feature X" --tags "work"
    ```
 
 5. **View all sessions:**
