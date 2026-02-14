@@ -264,22 +264,19 @@ export async function stopSession(options) {
         }
 
         while (!sessionTags || sessionTags.length === 0) {
-          const selectedTagNames = [];
+          const tagsAnswer = await inquirer.prompt([
+            {
+              type: 'checkbox',
+              name: 'tags',
+              message: 'Select at least one tag:',
+              choices: availableTags.map((t) => ({
+                name: `${t.name}`,
+                value: t.name,
+              })),
+            },
+          ]);
 
-          for (const tag of availableTags) {
-            const tagAnswer = await inquirer.prompt([
-              {
-                type: 'confirm',
-                name: 'include',
-                message: `Add tag "${tag.name}"?`,
-                default: false,
-              },
-            ]);
-
-            if (tagAnswer.include) {
-              selectedTagNames.push(tag.name);
-            }
-          }
+          const selectedTagNames = tagsAnswer.tags || [];
 
           if (selectedTagNames.length === 0) {
             console.log(chalk.yellow('At least one tag must be selected to save this session. Please choose again.'));
