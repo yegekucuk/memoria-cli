@@ -232,19 +232,31 @@ export async function stopSession(options) {
           process.exit(1);
         }
 
-        const tagsAnswer = await inquirer.prompt([
-          {
-            type: 'checkbox',
-            name: 'tags',
-            message: 'Select at least one tag:',
-            choices: availableTags.map((t) => ({
-              name: `${t.name}`,
-              value: t.id,
-            })),
-            validate: (selected) => (selected.length > 0 ? true : 'Select at least one tag'),
-          },
-        ]);
-        sessionTags = tagsAnswer.tags;
+        while (!sessionTags || sessionTags.length === 0) {
+          const selectedTagIds = [];
+
+          for (const tag of availableTags) {
+            const tagAnswer = await inquirer.prompt([
+              {
+                type: 'confirm',
+                name: 'include',
+                message: `Add tag "${tag.name}"?`,
+                default: false,
+              },
+            ]);
+
+            if (tagAnswer.include) {
+              selectedTagIds.push(tag.id);
+            }
+          }
+
+          if (selectedTagIds.length === 0) {
+            console.log(chalk.yellow('At least one tag must be selected to save this session. Please choose again.'));
+            continue;
+          }
+
+          sessionTags = selectedTagIds;
+        }
       }
     }
 
