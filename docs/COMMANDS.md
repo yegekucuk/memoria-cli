@@ -176,7 +176,7 @@ memoria stop --save|--discard [options]
 
 **Required Flags/Inputs (with --save):**
 - `-n, --notes <notes>` - Session notes (required)
-- `-t, --tags <tags>` - Comma-separated tag IDs (at least one required)
+- `-t, --tags <tags>` - Comma-separated tag names (at least one required)
 
 **Behavior:**
 1. Checks for active or pending session

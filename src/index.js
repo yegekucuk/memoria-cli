@@ -61,7 +61,7 @@ program
   .option('-s, --save', 'Save the session with notes and tags')
   .option('-d, --discard', 'Discard the session')
   .option('-n, --notes <notes>', 'Required session notes (used with --save)')
-  .option('-t, --tags <tags>', 'Required comma-separated tag IDs (used with --save)')
+  .option('-t, --tags <tags>', 'Required comma-separated tag names (used with --save)')
   .action(stopSession);
 
 program

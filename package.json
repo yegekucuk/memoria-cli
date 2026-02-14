@@ -1,6 +1,6 @@
 {
   "name": "memoria-cli",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "CLI tool for Memoria time tracking application",
   "type": "module",
   "main": "src/index.js",

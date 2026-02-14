@@ -123,7 +123,7 @@ export async function stopSession(options) {
   // Enforce exactly one flag
   if (!save && !discard) {
     console.error(chalk.red('✗ You must specify either --save or --discard.'));
-    console.error(chalk.dim('  Usage: memoria stop --save [--notes "..."] [--tags "id1,id2"]'));
+    console.error(chalk.dim('  Usage: memoria stop --save --notes "..." --tags "name1,name2"'));
     console.error(chalk.dim('         memoria stop --discard'));
     process.exit(1);
   }
@@ -203,15 +203,46 @@ export async function stopSession(options) {
     let sessionTags = parseTagsFlag(tags);
     const interactive = isInteractiveTerminal();
 
-    if (!sessionNotes || !sessionTags || sessionTags.length === 0) {
-      if (!interactive) {
-        console.error(chalk.red('✗ --save requires both --notes and at least one --tags value in non-interactive mode.'));
-        process.exit(1);
+    const tagsRes = await client.get('/api/tags');
+    if (tagsRes.status !== 200) {
+      handleApiError(tagsRes);
+      process.exit(1);
+    }
+
+    const availableTags = Array.isArray(tagsRes.data) ? tagsRes.data : [];
+    const tagNameLookup = new Map(availableTags.map((t) => [t.name.toLowerCase(), t.name]));
+
+    if (sessionTags && sessionTags.length > 0) {
+      const resolvedTagNames = [];
+      const invalidTagNames = [];
+
+      for (const rawTag of sessionTags) {
+        const normalized = tagNameLookup.get(rawTag.toLowerCase());
+        if (!normalized) {
+          invalidTagNames.push(rawTag);
+          continue;
+        }
+        resolvedTagNames.push(normalized);
       }
 
-      // Fetch available tags for selection
-      const tagsRes = await client.get('/api/tags');
-      const availableTags = tagsRes.status === 200 && Array.isArray(tagsRes.data) ? tagsRes.data : [];
+      if (invalidTagNames.length > 0) {
+        if (!interactive) {
+          console.error(chalk.red(`✗ Unknown tag name(s): ${invalidTagNames.join(', ')}`));
+          console.error(chalk.dim('  Use: memoria tags list'));
+          process.exit(1);
+        }
+
+        console.log(chalk.yellow(`Ignoring unknown tag name(s): ${invalidTagNames.join(', ')}`));
+      }
+
+      sessionTags = [...new Set(resolvedTagNames)];
+    }
+
+    if (!sessionNotes || !sessionTags || sessionTags.length === 0) {
+      if (!interactive) {
+        console.error(chalk.red('✗ --save requires both --notes and at least one valid --tags name in non-interactive mode.'));
+        process.exit(1);
+      }
 
       while (!sessionNotes) {
         const notesAnswer = await inquirer.prompt([
@@ -233,7 +264,7 @@ export async function stopSession(options) {
         }
 
         while (!sessionTags || sessionTags.length === 0) {
-          const selectedTagIds = [];
+          const selectedTagNames = [];
 
           for (const tag of availableTags) {
             const tagAnswer = await inquirer.prompt([
@@ -246,16 +277,16 @@ export async function stopSession(options) {
             ]);
 
             if (tagAnswer.include) {
-              selectedTagIds.push(tag.id);
+              selectedTagNames.push(tag.name);
             }
           }
 
-          if (selectedTagIds.length === 0) {
+          if (selectedTagNames.length === 0) {
             console.log(chalk.yellow('At least one tag must be selected to save this session. Please choose again.'));
             continue;
           }
 
-          sessionTags = selectedTagIds;
+          sessionTags = selectedTagNames;
         }
       }
     }

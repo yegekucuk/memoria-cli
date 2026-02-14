@@ -233,7 +233,7 @@ $ memoria start
 # Missing required flag
 $ memoria stop
 ✗ You must specify either --save or --discard.
-  Usage: memoria stop --save --notes "..." --tags "id1,id2"
+  Usage: memoria stop --save --notes "..." --tags "name1,name2"
          memoria stop --discard
 
 # Unauthorized

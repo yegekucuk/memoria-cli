@@ -62,6 +62,7 @@ components:
           type: array
           items:
             type: string
+          description: Tag names associated with the session
     Tag:
       type: object
       properties:
@@ -289,6 +290,7 @@ paths:
                   type: array
                   items:
                     type: string
+                  description: Tag names to associate with the session
       responses:
         '200':
           description: Created session
