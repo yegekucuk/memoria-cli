@@ -174,14 +174,14 @@ memoria stop --save|--discard [options]
 - `-s, --save` - Save the session with notes and tags
 - `-d, --discard` - Discard the session
 
-**Optional Flags (with --save):**
-- `-n, --notes <notes>` - Session notes
-- `-t, --tags <tags>` - Comma-separated tag IDs
+**Required Flags/Inputs (with --save):**
+- `-n, --notes <notes>` - Session notes (required)
+- `-t, --tags <tags>` - Comma-separated tag IDs (at least one required)
 
 **Behavior:**
 1. Checks for active or pending session
 2. If active → ends it by setting `endTime` to now
-3. If `--save` → prompts for notes/tags (or uses provided flags), saves via PATCH
+3. If `--save` → requires notes and at least one tag (prompts interactively when missing), saves via PATCH
 4. If `--discard` → deletes the session via DELETE
 
 **Examples:**

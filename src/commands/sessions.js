@@ -35,6 +35,24 @@ function computeElapsed(startTime) {
   return Math.floor((now - start) / 1000);
 }
 
+function normalizeNotes(value) {
+  if (typeof value !== 'string') return '';
+  return value.trim();
+}
+
+function parseTagsFlag(value) {
+  if (typeof value !== 'string') return null;
+  const parsed = value
+    .split(',')
+    .map((t) => t.trim())
+    .filter(Boolean);
+  return [...new Set(parsed)];
+}
+
+function isInteractiveTerminal() {
+  return Boolean(process.stdin.isTTY && process.stdout.isTTY);
+}
+
 /**
  * memoria start — Start a new session.
  * Blocks if there is an active or pending session.
@@ -180,53 +198,61 @@ export async function stopSession(options) {
       return;
     }
 
-    // --save: collect notes and tags
-    let sessionNotes = notes || null;
-    let sessionTags = tags ? tags.split(',').map((t) => t.trim()).filter(Boolean) : null;
+    // --save: notes and tags are required
+    let sessionNotes = normalizeNotes(notes);
+    let sessionTags = parseTagsFlag(tags);
+    const interactive = isInteractiveTerminal();
 
-    // If notes or tags not provided via flags, prompt interactively
-    if (!sessionNotes || !sessionTags) {
+    if (!sessionNotes || !sessionTags || sessionTags.length === 0) {
+      if (!interactive) {
+        console.error(chalk.red('✗ --save requires both --notes and at least one --tags value in non-interactive mode.'));
+        process.exit(1);
+      }
+
       // Fetch available tags for selection
       const tagsRes = await client.get('/api/tags');
       const availableTags = tagsRes.status === 200 && Array.isArray(tagsRes.data) ? tagsRes.data : [];
 
-      const prompts = [];
-
-      if (!sessionNotes) {
-        prompts.push({
-          type: 'input',
-          name: 'notes',
-          message: 'Notes (optional, press Enter to skip):',
-        });
+      while (!sessionNotes) {
+        const notesAnswer = await inquirer.prompt([
+          {
+            type: 'input',
+            name: 'notes',
+            message: 'Notes (required):',
+            validate: (v) => normalizeNotes(v).length > 0 || 'Notes are required',
+          },
+        ]);
+        sessionNotes = normalizeNotes(notesAnswer.notes);
       }
 
-      if (!sessionTags && availableTags.length > 0) {
-        prompts.push({
-          type: 'checkbox',
-          name: 'tags',
-          message: 'Select tags:',
-          choices: availableTags.map((t) => ({
-            name: `${t.name}`,
-            value: t.id,
-          })),
-        });
-      }
+      if (!sessionTags || sessionTags.length === 0) {
+        if (availableTags.length === 0) {
+          console.error(chalk.red('✗ At least one tag is required to save. No tags are available.'));
+          console.error(chalk.dim('  Create a tag first with: memoria tags create --name "Work" --color "#3498db"'));
+          process.exit(1);
+        }
 
-      if (prompts.length > 0) {
-        const answers = await inquirer.prompt(prompts);
-        if (!sessionNotes && answers.notes) {
-          sessionNotes = answers.notes;
-        }
-        if (!sessionTags && answers.tags) {
-          sessionTags = answers.tags;
-        }
+        const tagsAnswer = await inquirer.prompt([
+          {
+            type: 'checkbox',
+            name: 'tags',
+            message: 'Select at least one tag:',
+            choices: availableTags.map((t) => ({
+              name: `${t.name}`,
+              value: t.id,
+            })),
+            validate: (selected) => (selected.length > 0 ? true : 'Select at least one tag'),
+          },
+        ]);
+        sessionTags = tagsAnswer.tags;
       }
     }
 
     // Build update payload
-    const updatePayload = {};
-    if (sessionNotes) updatePayload.notes = sessionNotes;
-    if (sessionTags && sessionTags.length > 0) updatePayload.tags = sessionTags;
+    const updatePayload = {
+      notes: sessionNotes,
+      tags: sessionTags,
+    };
 
     const saveRes = await client.patch(`/api/sessions/${session.id}`, updatePayload);
     if (saveRes.status !== 200) {

@@ -60,8 +60,8 @@ program
   .description('Stop and resolve the current session')
   .option('-s, --save', 'Save the session with notes and tags')
   .option('-d, --discard', 'Discard the session')
-  .option('-n, --notes <notes>', 'Notes for the session (used with --save)')
-  .option('-t, --tags <tags>', 'Comma-separated tag IDs (used with --save)')
+  .option('-n, --notes <notes>', 'Required session notes (used with --save)')
+  .option('-t, --tags <tags>', 'Required comma-separated tag IDs (used with --save)')
   .action(stopSession);
 
 program
