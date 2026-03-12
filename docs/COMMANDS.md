@@ -266,7 +266,7 @@ memoria list
 
 **Behavior:**
 - Fetches all sessions via `GET /api/sessions`
-- Sorts by start time (most recent first)
+- Sorts by start time (oldest first, newest last)
 - Displays in a formatted table
 
 ---

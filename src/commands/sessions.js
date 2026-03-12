@@ -384,8 +384,8 @@ export async function listSessions() {
       wordWrap: true,
     });
 
-    // Sort by start time descending (most recent first)
-    sessions.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+    // Sort by start time ascending (oldest first, newest last)
+    sessions.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
 
     for (const s of sessions) {
       table.push([
