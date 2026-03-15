@@ -489,10 +489,10 @@ memoria config --get-url
 memoria config --set-url http://localhost:3000
 
 # Switch back to production
-memoria config --set-url https://memoria-track.vercel.app
+memoria config --set-url https://memoria.yegekucuk.me
 ```
 
-**Default URL:** `https://memoria-track.vercel.app`
+**Default URL:** `https://memoria.yegekucuk.me`
 
 ---
 

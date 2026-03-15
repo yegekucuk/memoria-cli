@@ -8,7 +8,7 @@ info:
   description: API for the Memoria time tracking application.
   version: 1.0.0
 servers:
-  - url: https://memoria-track.vercel.app
+  - url: https://memoria.yegekucuk.me
     description: Production server
 
 components:

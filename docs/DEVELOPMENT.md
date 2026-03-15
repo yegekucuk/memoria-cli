@@ -124,7 +124,7 @@ program
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "baseUrl": "https://memoria-track.vercel.app"
+  "baseUrl": "https://memoria.yegekucuk.me"
 }
 ```
 
@@ -489,7 +489,7 @@ cat ~/.memoria/credentials.json
 TOKEN=$(cat ~/.memoria/credentials.json | grep token | cut -d'"' -f4)
 
 # Make authenticated request
-curl -H "Cookie: token=$TOKEN" https://memoria-track.vercel.app/api/auth/me
+curl -H "Cookie: token=$TOKEN" https://memoria.yegekucuk.me/api/auth/me
 ```
 
 ### Clear Credentials

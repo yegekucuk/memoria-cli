@@ -31,7 +31,7 @@ The CLI stores its configuration in:
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "baseUrl": "https://memoria-track.vercel.app"
+  "baseUrl": "https://memoria.yegekucuk.me"
 }
 ```
 
@@ -85,7 +85,7 @@ memoria login
 The CLI defaults to the production server:
 
 ```
-https://memoria-track.vercel.app
+https://memoria.yegekucuk.me
 ```
 
 ### Changing the URL
@@ -108,7 +108,7 @@ memoria config
 
 | Environment | URL |
 |-------------|-----|
-| Production | `https://memoria-track.vercel.app` |
+| Production | `https://memoria.yegekucuk.me` |
 | Local Development | `http://localhost:3000` |
 | Staging | `https://staging.memoria-track.vercel.app` (if available) |
 
@@ -120,7 +120,7 @@ memoria config
 
 **Valid Examples:**
 ```bash
-memoria config --set-url https://memoria-track.vercel.app
+memoria config --set-url https://memoria.yegekucuk.me
 memoria config --set-url http://localhost:3000
 memoria config --set-url http://192.168.1.100:8080
 ```
@@ -128,7 +128,7 @@ memoria config --set-url http://192.168.1.100:8080
 **Invalid Examples:**
 ```bash
 memoria config --set-url memoria-track.vercel.app  # Missing protocol
-memoria config --set-url https://memoria-track.vercel.app/  # Trailing slash
+memoria config --set-url https://memoria.yegekucuk.me/  # Trailing slash
 ```
 
 ---

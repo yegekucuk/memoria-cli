@@ -5,7 +5,7 @@ import { join } from 'path';
 const CONFIG_DIR = join(homedir(), '.memoria');
 const CREDENTIALS_FILE = join(CONFIG_DIR, 'credentials.json');
 
-const DEFAULT_BASE_URL = 'https://memoria-track.vercel.app';
+const DEFAULT_BASE_URL = 'https://memoria.yegekucuk.me';
 
 function ensureConfigDir() {
   if (!existsSync(CONFIG_DIR)) {

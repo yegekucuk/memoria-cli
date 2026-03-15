@@ -57,7 +57,7 @@ npm link
 
 ### API Base URL
 
-The CLI defaults to the production server (`https://memoria-track.vercel.app`). To use a different server:
+The CLI defaults to the production server (`https://memoria.yegekucuk.me`). To use a different server:
 
 ```bash
 memoria config --set-url http://localhost:3000
